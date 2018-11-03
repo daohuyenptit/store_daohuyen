@@ -34,7 +34,7 @@ public class CustomerController {
         Customer customer= new Customer();
         customer.setFullName(customerBody.getFullname());
         customer.setAddress(customerBody.getAddress());
-        User user=new User(customerBody.getUsername(),customerBody.getPassword());
+        User user=new User(customerBody.getUsername(),customerBody.getPassword(),1);
         customer.setUser(user);
         customerRespository.save(customer);
         return new OkResponse();
@@ -54,7 +54,7 @@ public class CustomerController {
     @PutMapping("/updatecustomer/{id}")
     Response updateCustomer(@PathVariable("id") String customerID,@RequestBody CustomerBody customerBody){
 
-        Customer customer= customerRespository.findByUser_Id(customerID);
+        Customer customer= customerRespository.getCustomerByID(customerID);
         if(customer==null){
             return new NotFoundResponse("ko tiem thay id");
         }
@@ -71,7 +71,7 @@ public class CustomerController {
     Response updateProfile(@PathVariable("id") String customerID, @RequestBody CustomerBody1 customerBody1) {
         Response response;
         try {
-            Customer customer = customerRespository.findOne(customerID);
+            Customer customer = customerRespository.getCustomerByID(customerID);
             if (customer == null) {
                 return new NotFoundResponse("Customer not exist!");
             }
@@ -87,16 +87,13 @@ public class CustomerController {
             customer.setFullName(customerBody1.getFullName());
             customer.setIdentityCard(customerBody1.getIdentityCard());
             customer.setPhone(customerBody1.getPhone());
-            Gender gender=genderRespository.findOne(customerBody1.getGender());
+            Gender gender=genderRespository.getGenderID(customerBody1.getGender());
             customer.setGenderID(gender);
-
-//            customer.update(customerBody1);
             customerRespository.save(customer);
             CustomerView customerView=new CustomerView(customer);
             response = new OkResponse(customerView);
         } catch (Exception e) {
             e.printStackTrace();
-            ;
             response = new ServerErrorResponse();
         }
         return response;

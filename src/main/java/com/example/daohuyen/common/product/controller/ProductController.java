@@ -5,6 +5,7 @@ import com.example.daohuyen.common.product.dao.ProductRespository;
 import com.example.daohuyen.common.product.models.body.ProductBody;
 import com.example.daohuyen.common.product.models.data.Category;
 import com.example.daohuyen.common.product.models.data.Product;
+import com.example.daohuyen.common.product.models.view.CategoryViewModel;
 import com.example.daohuyen.common.product.models.view.ProductViewModel;
 import com.example.daohuyen.constants.Constant;
 import com.example.daohuyen.response_model.NotFoundResponse;
@@ -158,21 +159,27 @@ public class ProductController  {
     @GetMapping("/category")
     public Response getAllCategories(){
         Response response;
-        List<Category> categories=categoryRespository.getAllCategoryViewModels();
-        return new OkResponse(categories);
+        try {
+
+            List<CategoryViewModel> categories = categoryRespository.getAllCategoryViewModels();
+            return new OkResponse(categories);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
     }
 
     @GetMapping("/productdetail/{id}")
     public Response getDetailProduct(@PathVariable("id") String productID) {
         Response response;
-
-            Product product = productRespository.findOne(productID);
-            if (product == null) {
-                return new NotFoundResponse("Product not Exist");
-            }
+        try{
             ProductViewModel productViewModel = productRespository.getProductViewModel(productID);
             response = new OkResponse(productViewModel);
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
         return response;
     }
 // get all product when search

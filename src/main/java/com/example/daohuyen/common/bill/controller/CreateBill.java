@@ -5,6 +5,8 @@ import com.example.daohuyen.common.bill.models.body.BillBody;
 import com.example.daohuyen.common.bill.models.body.LotProductBody;
 import com.example.daohuyen.common.bill.models.data.Bill;
 import com.example.daohuyen.common.bill.models.data.LotProduct;
+import com.example.daohuyen.common.bill.models.view.BillView;
+import com.example.daohuyen.common.bill.models.view.BillViewItem;
 import com.example.daohuyen.common.customer.dao.CustomerRespository;
 import com.example.daohuyen.common.customer.models.data.Customer;
 import com.example.daohuyen.common.product.dao.ProductRespository;
@@ -40,7 +42,7 @@ public class CreateBill {
     public Response insertBill(@Valid @RequestBody BillBody billBody) {
         Response response;
         try {
-            Customer customer = customerRespository.findOne(billBody.getCustomerID());
+            Customer customer = customerRespository.getCustomerByID(billBody.getCustomerID());
             if (customer == null) {
                 return new NotFoundResponse(ResponesMessage.CUSTOMER_NOT_EXITS);
             }
@@ -48,8 +50,8 @@ public class CreateBill {
             Set<LotProduct> lotProducts = new HashSet<>();
             int total = 0;
             for (LotProductBody lotProductBody : billBody.getLotProductBodies()) {
-                Product product = productRespository.findOne(lotProductBody.getIdProduct());
-                // kiêểm tra produc null or ko ?
+                Product product = productRespository.getProduct(lotProductBody.getIdProduct());
+                // kiêểm tra product null or ko ?
                 if(product==null){
                     return new NotFoundResponse(ResponesMessage.PRODUCT_NOT_EXITS);
                 }
@@ -59,9 +61,17 @@ public class CreateBill {
                 total += lotProductBody.getPrice() * lotProductBody.getNumber();
 
             }
+            total+=billBody.getPrice_transport();
             if (lotProducts.size()>0){
                 bill.setLotProducts(lotProducts);
                 bill.setTotal(total);
+                bill.setPermit(0);
+                bill.setReceiver(billBody.getReceiver());
+                bill.setPhone(billBody.getPhone());
+                bill.setAddress_receive(billBody.getAddress_receive());
+                bill.setTransport(billBody.getTransport());
+                bill.setPrice_transport(billBody.getPrice_transport());
+                bill.setPay(billBody.getPay());
                 billRespository.save(bill);
             }
             response=new OkResponse();
@@ -72,6 +82,16 @@ public class CreateBill {
 
         }
         return response;
+    }
+    @ApiOperation(value = "Lay đơn hàng theo id" , response = Iterable.class)
+    @GetMapping("/getbill/{id}")
+    Response getBill(@PathVariable("id") String billID){
+
+        BillViewItem billView=billRespository.getBillViewItem(billID);
+        if(billView==null){
+            return new NotFoundResponse("ko tiem thay id");
+        }
+        return new OkResponse(billView);
     }
 //
 //    @ApiOperation(value = "api get id bill", response = Iterable.class)

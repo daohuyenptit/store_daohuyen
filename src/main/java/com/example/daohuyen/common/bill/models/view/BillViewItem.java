@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BillView {
+public class BillViewItem {
     private String id;
     private String customerName;
-//    private Set<LotproductView> lotProducts;
+    private Set<LotproductView> lotProducts;
 
     private long createDate;
     private int total;
@@ -23,18 +23,18 @@ public class BillView {
     private int price_transport;
     private String pay;
 
-    public BillView() {
+    public BillViewItem() {
     }
 
-    public BillView(String id,String customerName, Date createDate, int total, int permit,
-                    String receiver,String phone, String address_receive,
-                    String transport,int price_transport, String pay  ) {
+    public BillViewItem(String id, String customerName,Set<LotProduct> lotProductsSet, Date createDate, int total, int permit,
+                        String receiver, String phone, String address_receive,
+                        String transport, int price_transport, String pay  ) {
         this.id = id;
         this.customerName=customerName;
-//        this.lotProducts = new HashSet<>();
-//        for (LotProduct lotProduct: lotProductsSet) {
-//            lotProducts.add(new LotproductView(lotProduct));
-//        }
+        this.lotProducts = new HashSet<>();
+        for (LotProduct lotProduct: lotProductsSet) {
+            lotProducts.add(new LotproductView(lotProduct));
+        }
         this.createDate = createDate.getTime();
         this.total = total;
         this.permit = permit;
@@ -46,14 +46,14 @@ public class BillView {
         this.pay = pay;
     }
 
-    public BillView(Bill bill) {
+    public BillViewItem(Bill bill) {
         this.id = bill.getId();
         this.customerName=bill.getCustomer().getFullName();
-//        this.lotProducts = new HashSet<>();
-//        for (LotProduct lotProduct: bill.getLotProducts()) {
-//            lotProducts.add(new LotproductView(lotProduct));
-//
-//        }
+        this.lotProducts = new HashSet<>();
+        for (LotProduct lotProduct: bill.getLotProducts()) {
+            lotProducts.add(new LotproductView(lotProduct));
+
+        }
         this.createDate=bill.getCreateDate().getTime();
         this.total=bill.getTotal();
         this.permit=bill.getPermit();
@@ -145,13 +145,13 @@ public class BillView {
         this.id = id;
     }
 
-//    public Set<LotproductView> getLotProducts() {
-//        return lotProducts;
-//    }
-//
-//    public void setLotProducts(Set<LotproductView> lotProducts) {
-//        this.lotProducts = lotProducts;
-//    }
+    public Set<LotproductView> getLotProducts() {
+        return lotProducts;
+    }
+
+    public void setLotProducts(Set<LotproductView> lotProducts) {
+        this.lotProducts = lotProducts;
+    }
 
     public int getPermit() {
         return permit;

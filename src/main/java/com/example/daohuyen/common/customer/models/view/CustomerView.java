@@ -19,6 +19,21 @@ public class CustomerView {
     private long birthday;
     private String email;
 
+    public CustomerView(String id, String account, String password, String fullName, String phone, String gender, String address, String identityCard, String description, String avatarUrl, long birthday, String email) {
+        this.id = id;
+        this.account = account;
+        this.password = password;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.gender = gender;
+        this.address = address;
+        this.identityCard = identityCard;
+        this.description = description;
+        this.avatarUrl = avatarUrl;
+        this.birthday = birthday;
+        this.email = email;
+    }
+
     public String getId() {
         return id;
     }
@@ -116,7 +131,10 @@ public class CustomerView {
         this.identityCard=customer.getIdentityCard();
         this.account=customer.getUser().getUsername();
         this.password=customer.getUser().getPassword();
-        setBirthday(customer.getBirthday().getTime());
+        if(customer.getBirthday()!=null){
+            setBirthday(customer.getBirthday().getTime());
+
+        }
 
     }
 

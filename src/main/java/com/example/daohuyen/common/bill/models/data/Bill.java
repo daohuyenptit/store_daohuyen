@@ -22,6 +22,13 @@ public class Bill {
     private Customer customer;
     @OneToMany(mappedBy = "bill" , fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
     private Set<LotProduct> lotProducts;
+    private int permit;
+    private String receiver;
+    private String phone;
+    private String address_receive;
+    private String transport;
+    private int price_transport;
+    private String pay;
 
     public Bill() {
     }
@@ -30,12 +37,21 @@ public class Bill {
         this.customer = customer;
     }
 
-    public Bill(Customer customer, Set<LotProduct> lotProducts,int total) {
+    public Bill(Customer customer, Set<LotProduct> lotProducts,int total,int permit,String receiver,
+                String phone,String address_receive,String transport,int price_transport,String pay  ) {
         this.customer = customer;
         this.lotProducts = lotProducts;
         this.total = total;
+        this.permit=permit;
+        this.receiver=receiver;
+        this.phone=phone;
+        this.address_receive=address_receive;
+        this.transport=transport;
+        this.price_transport=price_transport;
+        this.pay=pay;
 
     }
+
     @PrePersist
     public void onPrepersist(){
         this.createDate = new Date();
@@ -82,5 +98,61 @@ public class Bill {
 
     public void setLotProducts(Set<LotProduct> lotProducts) {
         this.lotProducts = lotProducts;
+    }
+
+    public int getPermit() {
+        return permit;
+    }
+
+    public void setPermit(int permit) {
+        this.permit = permit;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress_receive() {
+        return address_receive;
+    }
+
+    public void setAddress_receive(String address_receive) {
+        this.address_receive = address_receive;
+    }
+
+    public String getTransport() {
+        return transport;
+    }
+
+    public void setTransport(String transport) {
+        this.transport = transport;
+    }
+
+    public int getPrice_transport() {
+        return price_transport;
+    }
+
+    public void setPrice_transport(int price_transport) {
+        this.price_transport = price_transport;
+    }
+
+    public String getPay() {
+        return pay;
+    }
+
+    public void setPay(String pay) {
+        this.pay = pay;
     }
 }

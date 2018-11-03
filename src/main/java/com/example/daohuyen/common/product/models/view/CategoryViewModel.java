@@ -13,6 +13,14 @@ public class CategoryViewModel {
     public CategoryViewModel() {
     }
 
+    public CategoryViewModel(String id, String title, String logo, String idPG, String namePL) {
+        this.id = id;
+        this.title = title;
+        this.logo = logo;
+        this.idPG = idPG;
+        this.namePL = namePL;
+    }
+
     public CategoryViewModel(Category category) {
         this.id = category.getId();
         this.title = category.getTitle();

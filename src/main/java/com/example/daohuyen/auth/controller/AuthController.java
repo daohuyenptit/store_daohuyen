@@ -41,7 +41,7 @@ public class AuthController {
     @ApiOperation(value = "Đăng nhập" , response = Iterable.class)
     @PostMapping("/customer/login")
     Response loginCustomer(@RequestBody UserBody userBody){
-        User user= userRespository.findByUsernameAndPassword(userBody.getUsername(),userBody.getPassword());
+        User user= userRespository.findByUsernameAndPasswordAndPost(userBody.getUsername(),userBody.getPassword(),1);
         if(user==null){
             return new NotFoundResponse("Khong co tai khoan");
         }

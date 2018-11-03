@@ -15,6 +15,15 @@ public class ProductViewModel {
     public ProductViewModel() {
     }
 
+    public ProductViewModel(String id, String name, int price, String logoUrl, String des, String categoryID) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.logoUrl = logoUrl;
+        this.des = des;
+        this.categoryID = categoryID;
+    }
+
     public ProductViewModel(Product product) {
         this.id = product.getId();
         this.name = product.getName();

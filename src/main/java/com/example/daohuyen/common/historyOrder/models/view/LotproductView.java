@@ -7,6 +7,7 @@ public class LotproductView {
     private String name;
     private int price;
     private String logoUrl;
+    private int amount;
 
     public LotproductView() {
     }
@@ -16,6 +17,15 @@ public class LotproductView {
         this.name = lotProduct.getProduct().getName();
         this.price = lotProduct.getProduct().getPrice();
         this.logoUrl = lotProduct.getProduct().getLogoUrl();
+        this.amount=lotProduct.getAmount();
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     public String getId() {

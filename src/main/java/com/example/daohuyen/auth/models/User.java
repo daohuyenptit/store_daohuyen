@@ -16,11 +16,26 @@ public class User {
     private String id;
     private String username;
     private String password;
+    private int post;
 
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public User(String username, String password, int post) {
+        this.username = username;
+        this.password = password;
+        this.post = post;
+    }
+
+    public int getPost() {
+        return post;
+    }
+
+    public void setPost(int post) {
+        this.post = post;
     }
 
     public User() {
