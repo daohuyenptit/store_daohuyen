@@ -123,7 +123,10 @@ public class CustomerView {
         this.id=customer.getId();
         this.fullName = customer.getFullName();
         this.phone = customer.getPhone();
-        this.gender= customer.getGenderID().getName();
+        if(customer.getGenderID()!=null){
+            this.gender= customer.getGenderID().getName();
+
+        }
         this.avatarUrl=customer.getAvatarUrl();
         this.address=customer.getAddress();
         this.email=customer.getEmail();

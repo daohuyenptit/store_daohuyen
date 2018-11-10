@@ -79,9 +79,10 @@ public class AdminController {
     Response updateBill(@RequestBody Set<String> listID) {
         Response response;
         try {
-            for (String id : listID) {
-                historyRepository.updateBill(id);
-            }
+//            for (String id : listID) {
+//                historyRepository.updateBill(id);
+//            }
+            historyRepository.updateBill(listID);
             response = new OkResponse();
 
         } catch (Exception e) {

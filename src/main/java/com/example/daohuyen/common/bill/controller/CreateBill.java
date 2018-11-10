@@ -9,6 +9,7 @@ import com.example.daohuyen.common.bill.models.view.BillView;
 import com.example.daohuyen.common.bill.models.view.BillViewItem;
 import com.example.daohuyen.common.customer.dao.CustomerRespository;
 import com.example.daohuyen.common.customer.models.data.Customer;
+import com.example.daohuyen.common.historyOrder.models.view.LotproductView;
 import com.example.daohuyen.common.product.dao.ProductRespository;
 import com.example.daohuyen.common.product.models.data.Product;
 import com.example.daohuyen.constants.Constant;
@@ -23,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -87,11 +90,16 @@ public class CreateBill {
     @GetMapping("/getbill/{id}")
     Response getBill(@PathVariable("id") String billID){
 
-        BillViewItem billView=billRespository.getBillViewItem(billID);
-        if(billView==null){
+        Set<LotProduct> lotproductViews=billRespository.getBillViewItem(billID);
+        if(lotproductViews==null){
             return new NotFoundResponse("ko tiem thay id");
         }
-        return new OkResponse(billView);
+        List<LotproductView> list=new ArrayList<>();
+        for (LotProduct lotProduct: lotproductViews){
+            list.add(new LotproductView(lotProduct));
+        }
+
+        return new OkResponse(list);
     }
 //
 //    @ApiOperation(value = "api get id bill", response = Iterable.class)

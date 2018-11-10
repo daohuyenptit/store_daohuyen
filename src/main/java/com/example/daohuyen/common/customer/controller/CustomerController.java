@@ -1,5 +1,6 @@
 package com.example.daohuyen.common.customer.controller;
 
+import com.example.daohuyen.auth.dao.UserRespository;
 import com.example.daohuyen.auth.models.User;
 import com.example.daohuyen.common.customer.dao.CustomerRespository;
 import com.example.daohuyen.common.customer.dao.GenderRespository;
@@ -8,10 +9,7 @@ import com.example.daohuyen.common.customer.models.body.CustomerBody1;
 import com.example.daohuyen.common.customer.models.data.Customer;
 import com.example.daohuyen.common.customer.models.data.Gender;
 import com.example.daohuyen.common.customer.models.view.CustomerView;
-import com.example.daohuyen.response_model.NotFoundResponse;
-import com.example.daohuyen.response_model.OkResponse;
-import com.example.daohuyen.response_model.Response;
-import com.example.daohuyen.response_model.ServerErrorResponse;
+import com.example.daohuyen.response_model.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +21,8 @@ import java.util.Date;
 @CrossOrigin(origins = "*")
 public class CustomerController {
     @Autowired
+    private UserRespository userRespository;
+    @Autowired
     CustomerRespository customerRespository;
     @Autowired
     GenderRespository genderRespository;
@@ -31,13 +31,23 @@ public class CustomerController {
     @ApiOperation(value = "Đăng kí" , response = Iterable.class)
     @PostMapping("/register")
     Response registerCustomer(@RequestBody CustomerBody customerBody){
+        User user=userRespository.findByUsername(customerBody.getUsername());
+        if(user!=null){
+            return new ResourceExistResponse("Tai khoan da ton tai!");
+
+        }else{
         Customer customer= new Customer();
         customer.setFullName(customerBody.getFullname());
         customer.setAddress(customerBody.getAddress());
-        User user=new User(customerBody.getUsername(),customerBody.getPassword(),1);
-        customer.setUser(user);
+        customer.setPhone(customerBody.getPhone());
+        Gender gender=genderRespository.findGenderByName(customerBody.getGender());
+        customer.setGenderID(gender);
+        User user1=new User(customerBody.getUsername(),customerBody.getPassword(),1);
+        customer.setUser(user1);
         customerRespository.save(customer);
         return new OkResponse();
+        }
+
     }
 
     @ApiOperation(value = "Lay customer theo userID" , response = Iterable.class)

@@ -10,7 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name = "bill")
 public class Bill {
-    public static final String CREATED_DATE = "createdDate";
+    public static final String CREATED_DATE = "createDate";
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")

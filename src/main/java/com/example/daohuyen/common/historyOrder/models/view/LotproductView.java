@@ -12,6 +12,14 @@ public class LotproductView {
     public LotproductView() {
     }
 
+    public LotproductView(String id, String name, int price, String logoUrl, int amount) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.logoUrl = logoUrl;
+        this.amount = amount;
+    }
+
     public LotproductView(LotProduct lotProduct) {
         this.id = lotProduct.getId();
         this.name = lotProduct.getProduct().getName();

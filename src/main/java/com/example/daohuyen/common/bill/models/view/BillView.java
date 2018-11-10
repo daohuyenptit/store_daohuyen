@@ -13,7 +13,7 @@ public class BillView {
     private String customerName;
 //    private Set<LotproductView> lotProducts;
 
-    private long createDate;
+    private long createdDate;
     private int total;
     private int permit;
     private String receiver;
@@ -26,7 +26,7 @@ public class BillView {
     public BillView() {
     }
 
-    public BillView(String id,String customerName, Date createDate, int total, int permit,
+    public BillView(String id,String customerName, Date createdDate, int total, int permit,
                     String receiver,String phone, String address_receive,
                     String transport,int price_transport, String pay  ) {
         this.id = id;
@@ -35,7 +35,7 @@ public class BillView {
 //        for (LotProduct lotProduct: lotProductsSet) {
 //            lotProducts.add(new LotproductView(lotProduct));
 //        }
-        this.createDate = createDate.getTime();
+        this.createdDate = createdDate.getTime();
         this.total = total;
         this.permit = permit;
         this.receiver = receiver;
@@ -54,7 +54,7 @@ public class BillView {
 //            lotProducts.add(new LotproductView(lotProduct));
 //
 //        }
-        this.createDate=bill.getCreateDate().getTime();
+        this.createdDate=bill.getCreateDate().getTime();
         this.total=bill.getTotal();
         this.permit=bill.getPermit();
         this.receiver = bill.getReceiver();
@@ -129,12 +129,12 @@ public class BillView {
         this.total = total;
     }
 
-    public long getCreateDate() {
-        return createDate;
+    public long getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateDate(long createDate) {
-        this.createDate = createDate;
+    public void setCreatedDate(long createDate) {
+        this.createdDate = createDate;
     }
 
     public String getId() {

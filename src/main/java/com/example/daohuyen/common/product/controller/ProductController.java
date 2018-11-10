@@ -85,6 +85,33 @@ public class ProductController  {
         }
         return response;
     }
+    /*Get 20 product which are the newest*/
+    /**********************All Product********************/
+    @ApiOperation(value = "Get 20 product which are the newest")
+    @GetMapping("/newest")
+    public Response getAllNewestProducts(
+
+            @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+            @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+            @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+            @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+            @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+            @RequestParam(value = "sortType", defaultValue = "desc") String sortType
+    ) {
+        Response response;
+        try {
+            Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+            Page<ProductViewModel> productViewModels = productRespository.get30ProductNew(pageable);
+            response = new OkResponse(productViewModels);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+
 
 
     @ApiOperation(value = "get Product not page")
@@ -140,20 +167,20 @@ public class ProductController  {
 
 
     /**********************All Product IDCategory********************/
-    @ApiOperation(value = "get Product by IdCategory khong dung page")
-    @GetMapping("/getProductsnotpage/{id}")
-    public Response getProductsByIdCategory(
-            @PathVariable("id") String catetoryID) {
-        Response response;
-        try {
-            List<ProductViewModel> productViewModels = productRespository.getAllProductListByCategory(catetoryID);
-            response = new OkResponse(productViewModels);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new ServerErrorResponse();
-        }
-        return response;
-    }
+//    @ApiOperation(value = "get Product by IdCategory khong dung page")
+//    @GetMapping("/getProductsnotpage/{id}")
+//    public Response getProductsByIdCategory(
+//            @PathVariable("id") String catetoryID) {
+//        Response response;
+//        try {
+//            List<ProductViewModel> productViewModels = productRespository.getAllProductListByCategory(catetoryID);
+//            response = new OkResponse(productViewModels);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response = new ServerErrorResponse();
+//        }
+//        return response;
+//    }
     /**********************Category********************/
     @ApiOperation(value = "get Category")
     @GetMapping("/category")

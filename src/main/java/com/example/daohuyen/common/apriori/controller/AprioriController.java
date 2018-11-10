@@ -39,7 +39,15 @@ public class AprioriController {
 
     @ApiOperation(value = "Suggest product")
     @GetMapping("/productsuggest/{inputcate}")
-    public Response getDetailProduct(@PathVariable("inputcate") String inputcate) {
+    public Response getDetailProduct(@PathVariable("inputcate") String inputcate,
+                                     @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
+                                     @RequestParam(value = "pageIndex", defaultValue = "0") Integer pageIndex,
+                                     @ApiParam(name = "pageSize", value = "Kích thước trang, mặc đinh và tối đa là " + Constant.MAX_PAGE_SIZE)
+                                         @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                     @ApiParam(name = "sortBy", value = "Trường cần sort, mặc định là " + Product.CREATED_DATE)
+                                         @RequestParam(value = "sortBy", defaultValue = Product.CREATED_DATE) String sortBy,
+                                     @ApiParam(name = "sortType", value = "Nhận (asc | desc), mặc định là desc")
+                                         @RequestParam(value = "sortType", defaultValue = "desc") String sortType) {
         Response response;
         try {
 
@@ -59,7 +67,7 @@ public class AprioriController {
 
             }
             // cai đoạn này hơi thừa nhưng thôi
-            List<ProductViewModel> listproduct=new ArrayList<>();
+            Page<ProductViewModel> productViewModels=null;
             List<Category> listCategory=new ArrayList<>();
             boolean flag=true;
             for (int i = 0; i <idInputs.size() ; i++) {
@@ -83,25 +91,13 @@ public class AprioriController {
 
             }
             for (int i = 0; i <listCategory.size() ; i++) {
-                List<ProductViewModel> productViewModelList=productRespository.getAllProductListByCategory(listCategory.get(i).getId());
-                for (int j = 0; j <productViewModelList.size() ; j++) {
-                    if(j<10){
-                        listproduct.add(productViewModelList.get(j));
-                    }
+                Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
+                productViewModels = productRespository.getAllProductListByCategory(pageable,listCategory.get(i).getId());
 
-
-                }
 
             }
 
-
-
-
-            if (listproduct == null) {
-                return new NotFoundResponse("Don't suggest");
-            }
-
-            response= new OkResponse(listproduct);
+            response= new OkResponse(productViewModels);
         }catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();
@@ -110,4 +106,3 @@ public class AprioriController {
 
     }
 }
-
