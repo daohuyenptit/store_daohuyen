@@ -13,6 +13,11 @@ public class CategoryViewModel {
     public CategoryViewModel() {
     }
 
+    public CategoryViewModel(String id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
     public CategoryViewModel(String id, String title, String logo, String idPG, String namePL) {
         this.id = id;
         this.title = title;

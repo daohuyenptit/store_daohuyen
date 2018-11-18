@@ -1,13 +1,15 @@
-package com.example.daohuyen.common.customer.models.data;
+package com.example.daohuyen.common.employee.models;
 
+import com.example.daohuyen.common.customer.models.data.User;
+import com.example.daohuyen.common.customer.models.data.Gender;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "customer")
-public class Customer {
+@Table(name = "employee")
+public class Employee {
 
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -26,25 +28,8 @@ public class Customer {
     private String email;
 
     @OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    @JoinColumn(name = "userID")
+    @JoinColumn(name = "adminID")
     private User user;
-
-    public Customer(String id,String fullName, String phone, Gender genderID, String address, String identityCard, String description, String avatarUrl, Date birthday, String email, User user) {
-        this.id=id;
-        this.fullName = fullName;
-        this.phone = phone;
-        this.genderID = genderID;
-        this.address = address;
-        this.identityCard = identityCard;
-        this.description = description;
-        this.avatarUrl = avatarUrl;
-        this.birthday = birthday;
-        this.email = email;
-        this.user = user;
-    }
-
-    public Customer() {
-    }
 
     public String getEmail() {
         return email;

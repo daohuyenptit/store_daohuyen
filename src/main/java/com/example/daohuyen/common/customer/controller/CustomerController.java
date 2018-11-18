@@ -1,7 +1,9 @@
 package com.example.daohuyen.common.customer.controller;
 
-import com.example.daohuyen.auth.dao.UserRespository;
-import com.example.daohuyen.auth.models.User;
+import com.example.daohuyen.common.customer.dao.UserRespository;
+import com.example.daohuyen.common.customer.models.data.User;
+import com.example.daohuyen.common.customer.models.body.NewPassword;
+import com.example.daohuyen.common.customer.models.body.UserBody;
 import com.example.daohuyen.common.customer.dao.CustomerRespository;
 import com.example.daohuyen.common.customer.dao.GenderRespository;
 import com.example.daohuyen.common.customer.models.body.CustomerBody;
@@ -12,8 +14,10 @@ import com.example.daohuyen.common.customer.models.view.CustomerView;
 import com.example.daohuyen.response_model.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Date;
 
 @RestController
@@ -26,6 +30,41 @@ public class CustomerController {
     CustomerRespository customerRespository;
     @Autowired
     GenderRespository genderRespository;
+    @ApiOperation(value = "Đăng nhập" , response = Iterable.class)
+    @PostMapping("/customer/login")
+    Response loginCustomer(@RequestBody UserBody userBody){
+        User user= userRespository.findByUsernameAndPasswordAndPost(userBody.getUsername(),userBody.getPassword(),1);
+        if(user==null){
+            return new NotFoundResponse("Khong co tai khoan");
+        }
+        Customer customer=customerRespository.findByUser_Id(user.getId());
+        CustomerView customerView=new CustomerView(customer);
+        return new OkResponse(customerView);
+    }
+    @ApiOperation(value = "Đổi mật khẩu", response = Iterable.class)
+    @PostMapping("/change/{id}/newPassword")
+    public Response changePassword(@PathVariable("id") String customerID,
+                                   @Valid @RequestBody NewPassword password) {
+        Response response;
+        try {
+            Customer customer = customerRespository.findOne(customerID);
+            if (customer == null) {
+                return new NotFoundResponse("Customer not Exist");
+            }
+            User u = customer.getUser();
+            if (u.getPassword().matches(password.getOldPassword())) {
+                u.setPassword(password.getNewPassword());
+                userRespository.save(u);
+                response = new OkResponse();
+            } else {
+                response = new Response(HttpStatus.CONFLICT, ResponseConstant.Vi.OLD_PASSWORD_MISMATCH);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
 
     /************* api đăng ký khách hàng ******************/
     @ApiOperation(value = "Đăng kí" , response = Iterable.class)

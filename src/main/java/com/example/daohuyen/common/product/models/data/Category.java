@@ -1,9 +1,7 @@
 package com.example.daohuyen.common.product.models.data;
-import com.example.daohuyen.common.apriori.models.Associative;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "category")

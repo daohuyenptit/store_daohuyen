@@ -12,4 +12,9 @@ public interface CategoryRespository extends JpaRepository<Category,String> {
     @Query("select new com.example.daohuyen.common.product.models.view.CategoryViewModel(c.id, c.title, c.logo, c.productGroup.id, c.productGroup.name) " +
             "from Category c")
     List<CategoryViewModel> getAllCategoryViewModels();
+    @Query("select new com.example.daohuyen.common.product.models.view.CategoryViewModel(c.id, c.title) " +
+            "from Category c where c.productGroup.id=?1")
+    List<CategoryViewModel> getCategoryByGroupID(String productGroupID);
+
+
 }
