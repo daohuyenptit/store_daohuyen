@@ -1,66 +1,68 @@
-package com.example.daohuyen.common.employee.models;
+package com.example.daohuyen.common.employee.models.body;
 
-import com.example.daohuyen.common.customer.models.data.User;
-import com.example.daohuyen.common.customer.models.data.Gender;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import java.util.Date;
-
-@Entity
-@Table(name = "employee")
-public class Employee {
-
-    @Id
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @GeneratedValue(generator = "uuid")
-    private String id;
+public class EmployeeBody {
     private String fullName;
     private String phone;
-    @OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    @JoinColumn(name = "genderID")
-    private Gender genderID;
+    private String username;
+    private String password;
+    private int genderID;
     private String address;
     private String identityCard;
     private String description;
     private String avatarUrl;
-    private Date birthday;
+    private long birthday;
     private String email;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    @JoinColumn(name = "adminID")
-    private User user;
+    public EmployeeBody() {
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public int getGenderID() {
+        return genderID;
+    }
+
+    public void setGenderID(int genderID) {
+        this.genderID = genderID;
+    }
 
     public String getEmail() {
         return email;
     }
 
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public Date getBirthday() {
+    public long getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 
-    public Gender getGenderID() {
+    public int getGender() {
         return genderID;
     }
 
-    public void setGenderID(Gender genderID) {
-        this.genderID = genderID;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setGender(int gender) {
+        this.genderID = gender;
     }
 
     public String getFullName() {
@@ -109,13 +111,5 @@ public class Employee {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

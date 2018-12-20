@@ -1,5 +1,6 @@
 package com.example.daohuyen.common.product.controller;
 
+import com.example.daohuyen.common.employee.controller.FirebaseMessagingService;
 import com.example.daohuyen.common.product.dao.*;
 import com.example.daohuyen.common.product.models.body.*;
 import com.example.daohuyen.common.product.models.data.*;
@@ -29,6 +30,8 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 public class ProductController  {
     @Autowired
+    FirebaseMessagingService firebaseMessagingService;
+    @Autowired
     private AprioriRespository aprioriRespository;
     @Autowired
     HistoryRepository historyRepository;
@@ -36,6 +39,8 @@ public class ProductController  {
     private CustomerRespository customerRespository;
     @Autowired
     private BillRespository billRespository;
+    @Autowired
+    private AprioRes aprioRes;
     @Autowired
     ProductRespository productRespository;
     @Autowired
@@ -122,7 +127,7 @@ public class ProductController  {
     }
     /*Get 20 product which are the newest*/
     /**********************All Product********************/
-    @ApiOperation(value = "Get 20 product which are the newest")
+    @ApiOperation(value = "Lấy 20 sản phẩm mới nhất")
     @GetMapping("/newest")
     public Response getAllNewestProducts(
 
@@ -175,7 +180,7 @@ public class ProductController  {
     }
 
     /**********************All Product IDCategory********************/
-    @ApiOperation(value = "get Product by IdCategory")
+    @ApiOperation(value = "lấy sản phẩm theo categoryID")
     @GetMapping("/getProducts/{id}")
     public Response getAllProductsByIdCategory(
             @PathVariable("id") String catetoryID,
@@ -200,7 +205,7 @@ public class ProductController  {
         return response;
     }
     /**********************Category********************/
-    @ApiOperation(value = "get Category")
+    @ApiOperation(value = "Lấy loại sản phẩm")
     @GetMapping("/category")
     public Response getAllCategories(){
         Response response;
@@ -228,7 +233,7 @@ public class ProductController  {
         }
         return response;
     }
-
+    @ApiOperation(value = "Lấy chi tiết sản phẩm")
     @GetMapping("/productdetail/{id}")
     public Response getDetailProduct(@PathVariable("id") String productID) {
         Response response;
@@ -243,7 +248,7 @@ public class ProductController  {
     }
 // get all product when search
 
-    @ApiOperation(value = "get Product Search")
+    @ApiOperation(value = "Tìm kiếm sản phẩm")
     @GetMapping("/getProductSearch/{key}")
     public Response getAllProductsBySearch(
             @PathVariable("key") String keyword,
@@ -260,6 +265,9 @@ public class ProductController  {
         try {
             Pageable pageable = PageAndSortRequestBuilder.createPageRequest(pageIndex, pageSize, sortBy, sortType, Constant.MAX_PAGE_SIZE);
             Page<ProductViewModel> productViewModels = productRespository.getAllProductBySearch(pageable,"%"+keyword+"%");
+            if(productViewModels.getContent().size()==0){
+             productViewModels=productRespository.getAllProductBySearchNameCategory(pageable,"%"+keyword+"%");
+            }
             response = new OkResponse(productViewModels);
         } catch (Exception e) {
             e.printStackTrace();
@@ -312,6 +320,17 @@ public class ProductController  {
 
         }
         return response;
+    }
+    @ApiOperation(value = "Lay đơn hàng theo id" , response = Iterable.class)
+    @GetMapping("/getbillbyID/{id}")
+    Response getBillID(@PathVariable("id") String billID){
+
+        BillViewItem billView=billRespository.getBillView(billID);
+        if(billView==null){
+            return new NotFoundResponse("Không tìm thấy đơn hàng");
+        }
+
+        return new OkResponse(billView);
     }
     @ApiOperation(value = "Lay đơn hàng theo id" , response = Iterable.class)
     @GetMapping("/getbill/{id}")
@@ -474,6 +493,27 @@ public class ProductController  {
         }
         return response;
     }
+    @ApiOperation(value = "tất cả hóa đơn để convert thanh notification ")
+    @GetMapping("/getAllSending/{id}")
+    public Response getSending(@PathVariable("id") String customerID) {
+        Response response;
+        Customer customer = customerRespository.findOne(customerID);
+        if (customer == null) {
+            return new NotFoundResponse("Customer not Exist");
+        }
+        try {
+            List<BillView> bills = historyRepository.getAllSending(customerID);
+            if (bills.size() == 0) {
+                return new NotFoundResponse("khong  tim thay bill đang giao");
+
+            }
+            response = new OkResponse(bills);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
     @ApiOperation(value = "tất cả hóa đơn đang giao ")
     @GetMapping("/getAllBillAdminSending")
     public Response getAllBillAdminSending() {
@@ -559,6 +599,25 @@ public class ProductController  {
         return response;
     }
     /**********************SP bán chạy********************/
+    @ApiOperation(value = "Sản phẩm bán chạy hàng đầu")
+    @GetMapping("/getBestSelllerProduct/{sd}")
+    public Response getBestMProduct(@PathVariable("sd") String sd) {
+        //truyền lên tháng và năm, yyyy-MM
+        String[] s=sd.split("-");
+        int month=Integer.parseInt(s[1]);
+        int ed=month+1;
+        String time=s[0]+"-"+ed+"-01";
+        Response response;
+        try {
+            List<Product> productViewModels = productRespository.getBestSellerProduct(Utils.convertDate(sd+"-01"),Utils.convertDate(time));
+            response = new OkResponse(productViewModels);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+    }
+    /**********************SP bán chạy********************/
     @ApiOperation(value = "Sản phẩm bán chạy trong ngày (số sp>2)")
     @GetMapping("/getDayBestSelllerProduct/{sd}")
     public Response getDayProduct(@PathVariable("sd") String sd) {
@@ -590,13 +649,22 @@ public class ProductController  {
 
     @ApiOperation(value = "Chuyển trạng thái bill thành đang giao", response = Iterable.class)
     @PutMapping("/editbill")
-    Response updateBill(@RequestBody Set<String> listID) {
+    Response updateBill(@RequestBody List<Notification> list ) {
         Response response;
         try {
-//            for (String id : listID) {
-//                historyRepository.updateBill(id);
-//            }
+            Set<String> listID=new HashSet<>();
+
+            for (Notification notification : list) {
+                listID.add(notification.getBillID());
+            }
             historyRepository.updateBill(1,listID);
+            for (int i = 0; i < list.size(); i++) {
+                firebaseMessagingService.sendNotification(FirebaseMessagingService
+                        .createOrderSuccessMessage(list.get(i).getCustomerID()
+                                , "Đơn đặt hàng"+list.get(i).getBillID()+" của bạn đang được giao",
+                                list.get(i).getBillID()
+                                , new Date()));
+            }
             response = new OkResponse();
 
         } catch (Exception e) {
@@ -696,7 +764,7 @@ public class ProductController  {
         return response;
 
     }
-    @ApiOperation(value = "Gợi ý sản phẩm")
+    @ApiOperation(value = "Gợi ý sản phẩm theo categoryID")
     @GetMapping("/productsuggest/{inputcate}")
     public Response getApioriProduct(@PathVariable("inputcate") String inputcate,
                                      @ApiParam(name = "pageIndex", value = "Index trang, mặc định là 0")
@@ -761,6 +829,29 @@ public class ProductController  {
 
                 response = new OkResponse(productViewModels);
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+            response = new ServerErrorResponse();
+        }
+        return response;
+
+    }
+    @ApiOperation(value = "Gợi ý sản phẩm theo productID")
+    @GetMapping("/productApriori/{input}")
+    public Response getApioriProductID(@PathVariable("input") String input) {
+        Response response;
+        try {
+            List<ProductViewModel> associatives=new ArrayList<>();
+            List<Integer> idInputs=aprioriRespository.getInput(input);
+            for (int i = 0; i <idInputs.size() ; i++) {
+                List<Apriori> list=aprioRes.findByInput_Id(idInputs.get(i));
+
+                for (int j = 0; j <list.size() ; j++) {
+                    associatives.add(new ProductViewModel(list.get(j).getProduct()));
+                }
+            }
+            response = new OkResponse(associatives);
+
         }catch (Exception e) {
             e.printStackTrace();
             response = new ServerErrorResponse();

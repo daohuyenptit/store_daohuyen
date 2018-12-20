@@ -7,6 +7,7 @@ import java.util.Date;
 public class BillView {
     private String id;
     private String customerName;
+    private String customerID;
     private long createdDate;
     private int total;
     private int permit;
@@ -20,11 +21,12 @@ public class BillView {
     public BillView() {
     }
 
-    public BillView(String id,String customerName, Date createdDate, int total, int permit,
+    public BillView(String id,String customerName,String customerID, Date createdDate, int total, int permit,
                     String receiver,String phone, String address_receive,
                     String transport,int price_transport, String pay  ) {
         this.id = id;
         this.customerName=customerName;
+        this.customerID=customerID;
 //        this.lotProducts = new HashSet<>();
 //        for (LotProduct lotProduct: lotProductsSet) {
 //            lotProducts.add(new LotproductView(lotProduct));
@@ -43,6 +45,7 @@ public class BillView {
     public BillView(Bill bill) {
         this.id = bill.getId();
         this.customerName=bill.getCustomer().getFullName();
+        this.customerID=bill.getCustomer().getId();
 //        this.lotProducts = new HashSet<>();
 //        for (LotProduct lotProduct: bill.getLotProducts()) {
 //            lotProducts.add(new LotproductView(lotProduct));
@@ -57,6 +60,14 @@ public class BillView {
         this.transport = bill.getTransport();
         this.price_transport=bill.getPrice_transport();
         this.pay = bill.getPay();
+    }
+
+    public String getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
     }
 
     public String getReceiver() {

@@ -20,24 +20,28 @@ public interface HistoryRepository extends JpaRepository<Bill,String> {
             "WHERE lp.bill.id=b.id   AND b.customer.id=c.id AND c.id= ?1 ")
     List<LotproductView> getAllHistory1(String customerID);
 
-    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName," +
+    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName,c.id," +
             "b.createDate,b.total,b.permit,b.receiver,b.phone,b.address_receive," +
             "b.transport,b.price_transport,b.pay) FROM Bill b join b.customer c Where c.id = ?1 and b.permit=0")
     Page<BillView> getAllBills(String customerID, Pageable pageable);
-    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName," +
+    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName,c.id," +
             "b.createDate,b.total,b.permit,b.receiver,b.phone,b.address_receive," +
             "b.transport,b.price_transport,b.pay) FROM Bill b join b.customer c Where c.id = ?1 and b.permit=1")
     Page<BillView> getAllBillsSending(String customerID, Pageable pageable);
-    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName," +
+    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName,c.id," +
+            "b.createDate,b.total,b.permit,b.receiver,b.phone,b.address_receive," +
+            "b.transport,b.price_transport,b.pay) FROM Bill b join b.customer c Where c.id = ?1 and b.permit=1")
+    List<BillView> getAllSending(String customerID);
+    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName,c.id," +
             "b.createDate,b.total,b.permit,b.receiver,b.phone,b.address_receive," +
             "b.transport,b.price_transport,b.pay) FROM Bill b join b.customer c Where c.id = ?1 and b.permit=2")
     Page<BillView> getAllBillsSent(String customerID, Pageable pageable);
-    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName," +
+    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,c.fullName,c.id," +
             "b.createDate,b.total,b.permit,b.receiver,b.phone,b.address_receive," +
             "b.transport,b.price_transport,b.pay) FROM Bill b join b.customer c Where c.id = ?1 and b.permit=3")
     Page<BillView> getAllBillsCancel(String customerID, Pageable pageable);
 
-    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,b.customer.fullName,b.createDate,b.total," +
+    @Query(" SELECT new com.example.daohuyen.common.product.models.view.BillView(b.id,b.customer.fullName,b.customer.id,b.createDate,b.total," +
             "b.permit,b.receiver,b.phone,b.address_receive, b.transport,b.price_transport,b.pay) " +
             "FROM Bill b   Where b.permit = ?1  order by b.createDate desc ")
     List<BillView> getAllBillsPermit(int permit);

@@ -1,22 +1,16 @@
 package com.example.daohuyen.common.customer.controller;
 
 import com.example.daohuyen.common.customer.dao.UserRespository;
-import com.example.daohuyen.common.customer.models.data.User;
-import com.example.daohuyen.common.customer.models.body.NewPassword;
-import com.example.daohuyen.common.customer.models.body.UserBody;
+import com.example.daohuyen.common.customer.models.body.*;
+import com.example.daohuyen.common.customer.models.data.*;
 import com.example.daohuyen.common.customer.dao.CustomerRespository;
 import com.example.daohuyen.common.customer.dao.GenderRespository;
-import com.example.daohuyen.common.customer.models.body.CustomerBody;
-import com.example.daohuyen.common.customer.models.body.CustomerBody1;
-import com.example.daohuyen.common.customer.models.data.Customer;
-import com.example.daohuyen.common.customer.models.data.Gender;
 import com.example.daohuyen.common.customer.models.view.CustomerView;
 import com.example.daohuyen.response_model.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.Date;
 
@@ -41,8 +35,32 @@ public class CustomerController {
         CustomerView customerView=new CustomerView(customer);
         return new OkResponse(customerView);
     }
+    @ApiOperation(value = "Đăng nhập facebook" , response = Iterable.class)
+    @PostMapping("/customer/loginfacebook/{username}")
+    Response loginCustomerFacebook(@PathVariable("username") String username,@RequestBody CustomerBody1 customerBody){
+        User user= userRespository.findByUsername(username);
+        if(user==null){
+            Customer customer= new Customer();
+            customer.setFullName(customerBody.getFullName());
+            Gender gender=genderRespository.findOne(customerBody.getGender());
+            customer.setGenderID(gender);
+            User user1=new User(username,username,1);
+            customer.setUser(user1);
+            customer.setAvatarUrl(customerBody.getAvatarUrl());
+            customer.setEmail(customerBody.getEmail());
+            if (customerBody.getBirthday() == -1) {
+                customer.setBirthday(new Date());
+            } else {
+                customer.setBirthday(new Date(customerBody.getBirthday()));
+            }
+            customerRespository.save(customer);
+        }
+        Customer customer=customerRespository.findByUser_Id(user.getId());
+        CustomerView customerView=new CustomerView(customer);
+        return new OkResponse(customerView);
+    }
     @ApiOperation(value = "Đổi mật khẩu", response = Iterable.class)
-    @PostMapping("/change/{id}/newPassword")
+    @PutMapping("/change/{id}/newPassword")
     public Response changePassword(@PathVariable("id") String customerID,
                                    @Valid @RequestBody NewPassword password) {
         Response response;
@@ -147,5 +165,4 @@ public class CustomerController {
         }
         return response;
     }
-
 }

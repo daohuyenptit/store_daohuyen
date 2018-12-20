@@ -10,8 +10,7 @@ import java.util.Set;
 public class BillViewItem {
     private String id;
     private String customerName;
-    private Set<LotproductView> lotProducts;// đây
-
+    private Set<LotproductView> lotProducts;
     private long createDate;
     private int total;
     private int permit;
