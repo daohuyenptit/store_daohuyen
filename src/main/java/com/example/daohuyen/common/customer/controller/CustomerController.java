@@ -59,7 +59,7 @@ public class CustomerController {
         CustomerView customerView=new CustomerView(customer);
         return new OkResponse(customerView);
     }
-    @ApiOperation(value = "Đổi mật khẩu", response = Iterable.class)
+    @ApiOperation(value = "Đổi mật khẩu 123", response = Iterable.class)
     @PutMapping("/change/{id}/newPassword")
     public Response changePassword(@PathVariable("id") String customerID,
                                    @Valid @RequestBody NewPassword password) {
