@@ -728,18 +728,20 @@ public class ProductController  {
         return response;
     }
     @ApiOperation(value = "Sửa sản phẩm", response = Iterable.class)
-    @PutMapping("/editproduct/{id}")
-    Response editProduct(@PathVariable("id") String productID, @RequestBody ProductBody productBody) {
+    @PutMapping("/editproduct/{id}/{idcate}")
+    Response editProduct(@PathVariable("idcate") String cateID,@PathVariable("id") String productID, @RequestBody ProductBody productBody) {
         Response response;
         try {
             Product product = productRespository.findOne(productID);
             if (product == null) {
                 return new NotFoundResponse("Không tồn tại product");
             }
+            Category category = categoryRespository.findOne(cateID);
             product.setPrice(productBody.getPrice());
             product.setName(productBody.getName());
             product.setLogoUrl(productBody.getLogoUrl());
             product.setDescription(productBody.getDescription());
+            product.setCategory(category);
             productRespository.save(product);
             ProductViewModel productViewModel=new ProductViewModel(product);
             response = new OkResponse(productViewModel);
