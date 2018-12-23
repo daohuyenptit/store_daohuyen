@@ -538,7 +538,7 @@ public class ProductController  {
         try {
             List<BillView> bills = historyRepository.getAllBillsPermit(2);
             if (bills.size() == 0) {
-                return new NotFoundResponse("khong  tim thay bill đang giao");
+                return new NotFoundResponse("khong  tim thay bill đã giao");
 
             }
             response = new OkResponse(bills);
