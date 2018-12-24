@@ -42,15 +42,15 @@ public interface ProductRespository extends JpaRepository<Product,String> {
     Set<ItemBody> getAllBestSellerProduct();
     @Query("select new com.example.daohuyen.common.product.models.body.ItemBody(p.name,sum(l.amount)) from " +
             "com.example.daohuyen.common.product.models.data.LotProduct l  join l.bill b  left join " +
-            "l.product p where b.permit=1 and b.createDate >=?1 and b.createDate<?2 group by p.name having  sum(l.amount)>5")
+            "l.product p where b.permit=2 and b.createDate >=?1 and b.createDate<?2 group by p.name having  sum(l.amount)>5")
     Set<ItemBody> getAllBestSellerMonthProduct(Timestamp sd,Timestamp ed);
     @Query("select new com.example.daohuyen.common.product.models.view.ProductViewModel(p.id, p.name, p.price, p.logoUrl, p.description, p.category.id)  from " +
             "com.example.daohuyen.common.product.models.data.LotProduct l  join l.bill b  left join " +
-            "l.product p where b.permit=1 and b.createDate >=?1 and b.createDate<?2 group by p having  sum(l.amount)>5")
+            "l.product p where b.permit=2 and b.createDate >=?1 and b.createDate<?2 group by p having  sum(l.amount)>5")
     List<Product> getBestSellerProduct(Timestamp sd, Timestamp ed);
     @Query("select new com.example.daohuyen.common.product.models.body.ItemBody(p.name,sum(l.amount)) from " +
             "com.example.daohuyen.common.product.models.data.LotProduct l  join l.bill b  left join " +
-            "l.product p where b.permit=1 and b.createDate >=?1 and b.createDate <=?2  group by p.name having  sum(l.amount)>=2 ")
+            "l.product p where b.permit=2 and b.createDate >=?1 and b.createDate <=?2  group by p.name having  sum(l.amount)>=2 ")
     Set<ItemBody> getAllBestSellerDayProduct(Timestamp sd,Timestamp ed);
 
     @Query("select new com.example.daohuyen.common.product.models.view.ProductViewModel(p.id, p.name, p.price, p.logoUrl, p.description, p.category.id) from Product p where p.createdDate<?1")
