@@ -38,7 +38,7 @@ public interface ProductRespository extends JpaRepository<Product,String> {
     @Query("select new com.example.daohuyen.common.product.models.view.ProductViewModel(p.id, p.name, p.price, p.logoUrl, p.description, p.category.id) " +
             "from Product p ")
     Page<ProductViewModel> get30ProductNew(Pageable pageable);
-    @Query("select new com.example.daohuyen.common.product.models.body.ItemBody(p.name,sum(l.amount)) from com.example.daohuyen.common.product.models.data.LotProduct l  join l.bill b  left join l.product p where b.permit=1  group by p.name having  sum(l.amount)>5")
+    @Query("select new com.example.daohuyen.common.product.models.body.ItemBody(p.name,sum(l.amount)) from com.example.daohuyen.common.product.models.data.LotProduct l  join l.bill b  left join l.product p where b.permit=2  group by p.name having  sum(l.amount)>5")
     Set<ItemBody> getAllBestSellerProduct();
     @Query("select new com.example.daohuyen.common.product.models.body.ItemBody(p.name,sum(l.amount)) from " +
             "com.example.daohuyen.common.product.models.data.LotProduct l  join l.bill b  left join " +

@@ -21,23 +21,24 @@ public interface BillRespository extends JpaRepository<Bill, String> {
     @Query("select count(b) from Bill b")
     int getCountBill();
     //month bestseller
-    @Query("select count(b) from Bill b where  b.createDate>=?1 and  b.createDate<?2")
+    @Query("select count(b) from Bill b where  b.createDate>=?1 and  b.createDate<?2 and b.permit=2")
     int getCountMonthBill(Timestamp sd,Timestamp ed);
-    @Query("select count(l) from com.example.daohuyen.common.product.models.data.LotProduct l where l.bill.createDate>=?1 and " +
-            " l.bill.createDate<?2")
+    @Query("select sum(l.amount) from com.example.daohuyen.common.product.models.data.LotProduct l where l.bill.createDate>=?1 and " +
+            " l.bill.createDate<?2 and l.bill.permit=2 ")
     int getCountMonthProduct(Timestamp sd,Timestamp ed);
-    @Query("select sum(b.total) from Bill b where  b.createDate>=?1 and  b.createDate<?2")
+    @Query("select sum(b.total) from Bill b where  b.createDate>=?1 and  b.createDate<?2 and b.permit=2")
     int getMonthTotal(Timestamp sd,Timestamp ed);
 //day bestseller
-    @Query("select count(b) from Bill b where  b.createDate >=?1 and b.createDate <=?2 ")
+    @Query("select count(b) from Bill b where  b.createDate >=?1 and b.createDate <=?2 and b.permit=2 ")
     int getCountDayBill(Timestamp sd,Timestamp ed);
-    @Query("select count(l) from com.example.daohuyen.common.product.models.data.LotProduct l where l.bill.createDate>=?1 and l.bill.createDate<=?2")
+    @Query("select sum(l.amount) from com.example.daohuyen.common.product.models.data.LotProduct l " +
+            "where l.bill.createDate>=?1 and l.bill.createDate<=?2 and l.bill.permit=2")
     int getCountDayProduct(Timestamp sd,Timestamp ed);
-    @Query("select sum(b.total) from Bill b  where  b.createDate >=?1 and b.createDate <=?2 ")
+    @Query("select sum(b.total) from Bill b  where  b.createDate >=?1 and b.createDate <=?2 and b.permit=2 ")
     int getDayTotal(Timestamp sd,Timestamp ed);
-    @Query("select count(l) from com.example.daohuyen.common.product.models.data.LotProduct l")
+    @Query("select sum(l.amount) from com.example.daohuyen.common.product.models.data.LotProduct l where l.bill.permit=2")
     int getCountProduct();
-    @Query("select sum(b.total) from Bill b")
+    @Query("select sum(b.total) from Bill b where b.permit=2")
     int getTotal();
 
 
